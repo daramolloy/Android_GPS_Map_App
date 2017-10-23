@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "124266139086",
+    "firebase_url": "https://gps-app-8909a.firebaseio.com",
+    "project_id": "gps-app-8909a",
+    "storage_bucket": "gps-app-8909a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124266139086:android:cb61cc12d7d552c8",
+        "android_client_info": {
+          "package_name": "com.example.daram.gps_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "124266139086-7hhsja4rmjugcael8efpa0fntpjtqhjf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.daram.gps_app",
+            "certificate_hash": "5ff3f0d702379db995f303c7fb8dccba64263ccd"
+          }
+        },
+        {
+          "client_id": "124266139086-mt70tsjf7b48r1b7ccur90fc0kvrr13p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTM3r4mBhtUL9WmM3dav5X5NvFdPuZCxw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "124266139086-mt70tsjf7b48r1b7ccur90fc0kvrr13p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
