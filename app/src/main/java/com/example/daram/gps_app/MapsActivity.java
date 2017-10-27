@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -293,4 +294,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         alertDialog.show();
     }
 
+    public void Submit(View view) {
+        finish();
+    }
 }

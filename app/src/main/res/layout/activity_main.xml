@@ -8,40 +8,27 @@
     android:orientation="vertical"
     tools:context="com.example.daram.gps_app.MainActivity">
 
-    <LinearLayout
+
+    <Button
+        android:id="@+id/Submit"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_height="60dp"
+        android:onClick="openSubmitMessage"
+        android:text="Submit Message" />
 
-        <Button
-            android:id="@+id/Submit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Submit Message" />
+    <Button
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:onClick="openMapView"
+        android:text="Map View" />
 
-        <EditText
-            android:id="@+id/editText"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.39"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Enter Message....." />
+    <Button
+        android:id="@+id/messages"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:onClick="openAllMessages"
+        android:text="All Messages" />
 
-        <Button
-            android:id="@+id/button7"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_weight="0.03"
-            android:text="Button" />
-
-        <Button
-            android:id="@+id/button6"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:text="Button" />
-    </LinearLayout>
 
 </LinearLayout>
