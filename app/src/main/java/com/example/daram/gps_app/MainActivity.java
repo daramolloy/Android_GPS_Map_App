@@ -54,5 +54,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openSubmitMessage(View view) {
+        Intent Submit = new Intent (this, SubmitMessage.class);
+        startActivity(Submit);
     }
 }
