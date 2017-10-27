@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openAllMessages(View view) {
-
+        Intent Messages = new Intent (this, AllMessages.class);
+        startActivity(Messages);
     }
 
     public void openMapView(View view) {
