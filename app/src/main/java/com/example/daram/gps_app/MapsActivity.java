@@ -162,12 +162,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.zoomTo(18));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(CurrentLocation));
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        Date now = new Date();
-        String ID = (String.valueOf(now.getTime()));
-        DatabaseReference myRef = database.getReference(ID);
-        LocationData currentData = new LocationData(location.getLatitude(),location.getLongitude());
-        myRef.setValue(currentData);
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        Date now = new Date();
+//        String ID = (String.valueOf(now.getTime()));
+//        DatabaseReference myRef = database.getReference(ID);
+//        LocationData currentData = new LocationData(location.getLatitude(),location.getLongitude());
+//        myRef.setValue(currentData);
     }
 
     @Override
