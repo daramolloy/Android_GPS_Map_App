@@ -56,17 +56,17 @@ public class AllMessages extends AppCompatActivity {
                     String dateString = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format(date);
 
 
-                        // create a new textview
-                        final TextView rowTextView = new TextView(this);
-
-                        // set some properties of rowTextView or something
-                        rowTextView.setText("This is row #" + i);
-
-                        // add the textview to the linearlayout
-                        myLinearLayout.addView(rowTextView);
-
-                        // save a reference to the textview for later
-                        myTextViews[i] = rowTextView;
+//                        // create a new textview
+//                        final TextView rowTextView = new TextView(this);
+//
+//                        // set some properties of rowTextView or something
+//                        rowTextView.setText("This is row #" + i);
+//
+//                        // add the textview to the linearlayout
+//                        myLinearLayout.addView(rowTextView);
+//
+//                        // save a reference to the textview for later
+//                        myTextViews[i] = rowTextView;
 
 
                 }
