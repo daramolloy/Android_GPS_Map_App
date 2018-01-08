@@ -32,6 +32,7 @@ public class SubmitMessage extends AppCompatActivity implements android.location
 
     EditText editText;
     LocationManager mLocationManager;
+    Location currentLocation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +44,6 @@ public class SubmitMessage extends AppCompatActivity implements android.location
 
     public void SubmitText(View view) {
         try {
-            Location currentLocation;
-            System.out.println("This works");
             //currentLocation.getLatitude();
             //mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -59,7 +58,7 @@ public class SubmitMessage extends AppCompatActivity implements android.location
             }
             currentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-            //Log.d("Log1" ,Double.toString(currentLocation.getLatitude()));
+            //Log.d("Log1" ,currentLocation.toString());
             //System.out.println(currentLocation.getLatitude() + " , " + currentLocation.getLongitude());
 
 
@@ -78,7 +77,7 @@ public class SubmitMessage extends AppCompatActivity implements android.location
 
     public Location getLocation() {
         Location location = null;
-        long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100;// Distance in meters
+        long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;// Distance in meters
         long MIN_TIME_BW_UPDATES = 100;// Time in milliseconds
         double lat;
         double lng;
@@ -195,7 +194,7 @@ public class SubmitMessage extends AppCompatActivity implements android.location
         boolean isNetwork = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         boolean canGetLocation = true;
         int ALL_PERMISSIONS_RESULT = 101;
-        long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100;// Distance in meters
+        long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;// Distance in meters
         long MIN_TIME_BW_UPDATES = 100;// Time in milliseconds
 
         ArrayList<String> permissions = new ArrayList<>();
