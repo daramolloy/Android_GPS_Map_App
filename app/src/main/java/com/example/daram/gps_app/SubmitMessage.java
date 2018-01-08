@@ -22,9 +22,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -32,9 +36,13 @@ import java.util.Date;
 public class SubmitMessage extends AppCompatActivity implements android.location.LocationListener {
 
     EditText editText;
-    LocationManager mLocationManager;
-    Location currentLocation = null;
     private LocationData currentLoc;
+    private Location currentLocation = new Location("");
+    private ArrayList<String> LocationStringList = new ArrayList<String>();
+    private ArrayList<Location> LocationObjList = new ArrayList<Location>();
+    private String addToMsg;
+    private String keyToDelete;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,121 +51,124 @@ public class SubmitMessage extends AppCompatActivity implements android.location
         editText = (EditText) findViewById(R.id.editText2);
         startGettingLocations();
 
-
     }
 
     public void SubmitText(View view) {
-        try {
-
-            //currentLocation.getLatitude();
-            //mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-            System.out.println("This works");
-            LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRefDown = database.getReference();
+
+        myRefDown.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    // The currentLoc LocationData object must be parsed as a location object
+                    // This is to compare it with each location object in the database using the "distanceTo()" method
+                    currentLocation.setLatitude(currentLoc.getLatitude());
+                    currentLocation.setLongitude(currentLoc.getLongitude());
+
+                    for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
+                        Log.d("log value", "" + messageSnapshot.getValue().toString());
+                        Log.d("log key", "" + messageSnapshot.getKey());
+                        String databaseLocations = messageSnapshot.getValue().toString() + "," + messageSnapshot.getKey();
+                        Log.d("log locations" , databaseLocations);
+                        LocationStringList.add(databaseLocations);
+                    }
+
+                    for (String i : LocationStringList) {
+
+                        String ss[] = i.split(",");
+                        String message = ss[0];
+                        String longi = ss[2];
+                        String latt = ss[1];
+                        String key = ss[3];
+
+                        latt = latt.replace("{", "");
+                        longi = longi.replace("}", "");
+                        message = message.substring(9);
+                        latt = latt.substring(10);
+                        longi = longi.substring(11);
+
+                        double latitudeDB = Double.parseDouble(latt);
+                        double longitudeDB = Double.parseDouble(longi);
+
+                        Location compareLoc = new Location("");
+                        compareLoc.setLatitude(latitudeDB);
+                        compareLoc.setLongitude(longitudeDB);
+
+                        LocationObjList.add(compareLoc);
+
+                        for(Location a : LocationObjList){
+                            if ((a.distanceTo(currentLocation))<10){
+                                keyToDelete = key;
+                                addToMsg = message;
+                            }
+                        }
+
+
+                        Log.d("Latt", "Value is: " + latitudeDB);
+                        Log.d("Long", "Value is: " + longitudeDB);
+                        Log.d("Message", "Value is: " + message);
+                    }
+
+
+                }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("Lawg", "Failed to read value.", error.toException());
             }
+        });
+
+            // A permission check is required for the getLastKnownLocation() method to work
+            //if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+              //  return;
+            //}
 
 
-            currentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            Log.d("Current Location", currentLoc.toString());
+        Date now = new Date();
+        String ID = (String.valueOf(now.getTime()));
 
-            //Log.d("Log1" ,currentLocation.toString());
-            //System.out.println(currentLocation.getLatitude() + " , " + currentLocation.getLongitude());
+        for(Location a : LocationObjList){
+            float distance = a.distanceTo(currentLocation);
+            if (distance>=10){
 
+                DatabaseReference myRefUp = database.getReference(ID);
+                MessageData currentData = new MessageData(currentLoc.getLatitude(),
+                        currentLoc.getLongitude(), editText.getText().toString());
+                myRefUp.setValue(currentData);
+            }else{ // Messages closer than 10m must append the old one
+                Log.d("key", keyToDelete);
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            Date now = new Date();
-            String ID = (String.valueOf(now.getTime()));
-            DatabaseReference myRef = database.getReference(ID);
-            MessageData currentData = new MessageData(currentLocation.getLatitude(),
-                    currentLocation.getLongitude(), editText.getText().toString());
-            myRef.setValue(currentData);
+                DatabaseReference refToDelete = database.getReference(keyToDelete);
+                refToDelete.removeValue();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+                DatabaseReference myRefUp = database.getReference(ID);
+                String newMessage = addToMsg + "; " + editText.getText().toString();
+
+                MessageData currentData = new MessageData(currentLoc.getLatitude(),
+                        currentLoc.getLongitude(), newMessage);
+                myRefUp.setValue(currentData);
+
+            }
+            Log.d("distance", "" + distance);
         }
-    }
-
-    public Location getLocation() {
-        Location location = null;
-        long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;// Distance in meters
-        long MIN_TIME_BW_UPDATES = 100;// Time in milliseconds
-        double lat;
-        double lng;
 
 
-//    public Location getLocation() {
-//        Location location = null;
-//        long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100;// Distance in meters
-//        long MIN_TIME_BW_UPDATES = 100;// Time in milliseconds
-//        double lat;
-//        double lng;
-//
-//        try {
-////            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-////            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-////            // getting GPS status
-////            boolean isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-////
-////            // getting network status
-////            boolean isNetworkEnabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-////
-////            if (ActivityCompat.checkSelfPermission(this,
-////                    android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-////                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-////                            != PackageManager.PERMISSION_GRANTED) {
-////
-////                Toast.makeText(this, "Permission not Granted", Toast.LENGTH_SHORT).show();
-////
-////                return null;
-////            }
-////
-////            if (!isGPSEnabled && !isNetworkEnabled) {
-////                // no network provider is enabled
-////            } else {
-////                // First get location from Network Provider
-////                if (isNetworkEnabled) {
-////                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-////                            MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-////                    Log.d("Network", "Network");
-////                        location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-////                        if (location != null) {
-////                            lat = location.getLatitude();
-////                            lng = location.getLongitude();
-////                        }
-////
-////                }
-////                //get the location by gps
-////                if (isGPSEnabled) {
-////                    if (location == null) {
-////                        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,MIN_TIME_BW_UPDATES,MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-////                        Log.d("GPS Enabled", "GPS Enabled");
-////                        location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-////                            if (location != null) {
-////                                lat = location.getLatitude();
-////                                lng = location.getLongitude();
-////                            }
-////
-////                    }
-////                }
-////            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-       return location;
-       }
+
+            // Show the user that the message sent successfully
+            Context context = getApplicationContext();
+            CharSequence text = "Message sent";
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+
+        }
+
+
+
+
 
     public void Back(View view) {
         finish();
