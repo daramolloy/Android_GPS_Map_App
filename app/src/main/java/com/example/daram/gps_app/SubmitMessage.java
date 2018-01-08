@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -33,6 +34,7 @@ public class SubmitMessage extends AppCompatActivity implements android.location
     EditText editText;
     LocationManager mLocationManager;
     Location currentLocation = null;
+    private LocationData currentLoc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,16 +48,14 @@ public class SubmitMessage extends AppCompatActivity implements android.location
 
     public void SubmitText(View view) {
         try {
-<<<<<<< HEAD
+
             //currentLocation.getLatitude();
             //mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-=======
 
             System.out.println("This works");
             LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
->>>>>>> 521f96529f6dde48e1bea7dd0cc4e37127e547fc
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
@@ -69,7 +69,7 @@ public class SubmitMessage extends AppCompatActivity implements android.location
 
 
             currentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            Log.d("Current Location", currentLocation.toString());
+            Log.d("Current Location", currentLoc.toString());
 
             //Log.d("Log1" ,currentLocation.toString());
             //System.out.println(currentLocation.getLatitude() + " , " + currentLocation.getLongitude());
@@ -88,15 +88,13 @@ public class SubmitMessage extends AppCompatActivity implements android.location
         }
     }
 
-<<<<<<< HEAD
     public Location getLocation() {
         Location location = null;
         long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;// Distance in meters
         long MIN_TIME_BW_UPDATES = 100;// Time in milliseconds
         double lat;
         double lng;
-=======
->>>>>>> 521f96529f6dde48e1bea7dd0cc4e37127e547fc
+
 
 //    public Location getLocation() {
 //        Location location = null;
@@ -158,8 +156,8 @@ public class SubmitMessage extends AppCompatActivity implements android.location
 //            e.printStackTrace();
 //        }
 //
-//        return location;
-//    }
+       return location;
+       }
 
     public void Back(View view) {
         finish();
@@ -221,6 +219,7 @@ public class SubmitMessage extends AppCompatActivity implements android.location
         int ALL_PERMISSIONS_RESULT = 101;
         long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;// Distance in meters
         long MIN_TIME_BW_UPDATES = 100;// Time in milliseconds
+        Criteria criteria = new Criteria();
 
         ArrayList<String> permissions = new ArrayList<>();
         ArrayList<String> permissionsToRequest;
@@ -262,6 +261,8 @@ public class SubmitMessage extends AppCompatActivity implements android.location
                         LocationManager.GPS_PROVIDER,
                         MIN_TIME_BW_UPDATES,
                         MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                Location location = mLocationManager.getLastKnownLocation(mLocationManager.getBestProvider(criteria, false));
+                currentLoc = new LocationData(location.getLatitude(),location.getLongitude());
 
             } else if (isNetwork) {
                 // from Network Provider
@@ -270,6 +271,8 @@ public class SubmitMessage extends AppCompatActivity implements android.location
                         LocationManager.NETWORK_PROVIDER,
                         MIN_TIME_BW_UPDATES,
                         MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                Location location = mLocationManager.getLastKnownLocation(mLocationManager.getBestProvider(criteria, false));
+                currentLoc = new LocationData(location.getLatitude(),location.getLongitude());
 
             }
         }

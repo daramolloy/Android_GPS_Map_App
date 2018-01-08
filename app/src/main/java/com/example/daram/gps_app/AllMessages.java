@@ -58,7 +58,6 @@ public class AllMessages extends AppCompatActivity {
                     Date date = new Date(Long.parseLong(Millis));
                     String dateString = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format(date);
 
-<<<<<<< HEAD
                     Log.d("Latt", "Value is: " + latitudeDB);
                     Log.d("Long", "Value is: " + longitudeDB);
                     Log.d("Date", "Value is: " + date);
@@ -68,13 +67,13 @@ public class AllMessages extends AppCompatActivity {
 
                     LinearLayout linearLayout = (LinearLayout) findViewById(R.id.ll);
 
-                    TextView textView1 = new TextView(this);
-                    textView1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT));
-                    textView1.setText("programmatically created TextView1");
-                    textView1.setBackgroundColor(0xff66ff66); // hex color 0xAARRGGBB
-                    textView1.setPadding(20, 20, 20, 20);// in pixels (left, top, right, bottom)
-                    linearLayout.addView(textView1);
+//                    //TextView textView1 = new TextView(this);
+//                    textView1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+//                            LinearLayout.LayoutParams.WRAP_CONTENT));
+//                    textView1.setText("programmatically created TextView1");
+//                    textView1.setBackgroundColor(0xff66ff66); // hex color 0xAARRGGBB
+//                    textView1.setPadding(20, 20, 20, 20);// in pixels (left, top, right, bottom)
+//                    linearLayout.addView(textView1);
 
 //                    // create a new textview
 //                    final TextView rowTextView = new TextView(this);
@@ -87,8 +86,6 @@ public class AllMessages extends AppCompatActivity {
 //
 //                    // save a reference to the textview for later
 //                    myTextViews[i] = rowTextView;
-=======
-
 //                        // create a new textview
 //                        final TextView rowTextView = new TextView(this);
 //
@@ -100,8 +97,6 @@ public class AllMessages extends AppCompatActivity {
 //
 //                        // save a reference to the textview for later
 //                        myTextViews[i] = rowTextView;
->>>>>>> 521f96529f6dde48e1bea7dd0cc4e37127e547fc
-
 
                 }
             }
