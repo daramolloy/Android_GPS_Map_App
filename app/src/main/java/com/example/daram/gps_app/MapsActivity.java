@@ -63,27 +63,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
                 for (String i: MainList){
+
                     Log.d(TAG, "Value is: " + i);
+
                     String ss[] = i.split(",");
                     String Millis = ss[0];
-                    String latt = ss[1];
-                    String longi = ss[2];
+                    String message = ss[1];
+                    String longi = ss[3];
+                    String latt = ss[2];
 
                     latt = latt.replace("{", "");
                     longi = longi.replace("}", "");
-
+                    message = message.substring(10);
                     latt = latt.substring(10);
                     longi = longi.substring(11);
+
                     double latitudeDB = Double.parseDouble(latt);
                     double longitudeDB = Double.parseDouble(longi);
 
-                    Date date=new Date(Long.parseLong(Millis));
+                    Date date = new Date(Long.parseLong(Millis));
                     String dateString = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format(date);
 
                     LatLng marker = new LatLng(latitudeDB, longitudeDB);
                     mMap.addMarker(new MarkerOptions()
                             .position(marker)
-                            .title(dateString)
+                            .title(dateString + " : " + message)
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 
 
@@ -116,11 +120,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng Engineering_Building = new LatLng(53.283912, -9.063874);
-        mMap.addMarker(new MarkerOptions().position(Engineering_Building).title("Marker at Engineering Building")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(18));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(Engineering_Building));
+//        LatLng Engineering_Building = new LatLng(53.283912, -9.063874);
+//        mMap.addMarker(new MarkerOptions().position(Engineering_Building).title("Marker at Engineering Building")
+//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(6));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(53.1424, -8.1983269)));
     }
 
     @Override

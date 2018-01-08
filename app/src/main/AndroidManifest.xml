@@ -34,7 +34,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main">
+            android:label="Home">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,11 +43,13 @@
         </activity>
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
+            android:label="Map" />
         <activity
             android:name=".SubmitMessage"
             android:label="Submit Message" />
-        <activity android:name=".AllMessages"></activity>
+        <activity
+            android:name=".AllMessages"
+            android:label="All Messages" ></activity>
     </application>
 
 </manifest>

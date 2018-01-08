@@ -154,9 +154,6 @@ public class SubmitMessage extends AppCompatActivity implements android.location
             }
             Log.d("distance", "" + distance);
         }
-
-
-
             // Show the user that the message sent successfully
             Context context = getApplicationContext();
             CharSequence text = "Message sent";
@@ -165,9 +162,6 @@ public class SubmitMessage extends AppCompatActivity implements android.location
             toast.show();
 
         }
-
-
-
 
 
     public void Back(View view) {
