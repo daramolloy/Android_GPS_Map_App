@@ -58,6 +58,7 @@ public class AllMessages extends AppCompatActivity {
                     Date date = new Date(Long.parseLong(Millis));
                     String dateString = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format(date);
 
+<<<<<<< HEAD
                     Log.d("Latt", "Value is: " + latitudeDB);
                     Log.d("Long", "Value is: " + longitudeDB);
                     Log.d("Date", "Value is: " + date);
@@ -86,6 +87,20 @@ public class AllMessages extends AppCompatActivity {
 //
 //                    // save a reference to the textview for later
 //                    myTextViews[i] = rowTextView;
+=======
+
+//                        // create a new textview
+//                        final TextView rowTextView = new TextView(this);
+//
+//                        // set some properties of rowTextView or something
+//                        rowTextView.setText("This is row #" + i);
+//
+//                        // add the textview to the linearlayout
+//                        myLinearLayout.addView(rowTextView);
+//
+//                        // save a reference to the textview for later
+//                        myTextViews[i] = rowTextView;
+>>>>>>> 521f96529f6dde48e1bea7dd0cc4e37127e547fc
 
 
                 }
