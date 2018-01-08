@@ -22,7 +22,7 @@
         android:id="@+id/Submit"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:onClick="Submit"
+        android:onClick="CloseMap"
         android:layout_alignParentBottom="true"
         android:text="Return to Home" />
 

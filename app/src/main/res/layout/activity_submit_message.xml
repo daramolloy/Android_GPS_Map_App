@@ -17,7 +17,7 @@
         android:layout_marginTop="14dp"
         android:ems="10"
         android:inputType="textMultiLine"
-        android:text="Enter your message here...." />
+        android:hint="Enter your message here...." />
 
     <Button
         android:id="@+id/SubmitMessage"

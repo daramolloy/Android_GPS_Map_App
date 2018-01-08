@@ -61,36 +61,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
                     MainList.add(String.valueOf(messageSnapshot.getKey()) + ", " + (String.valueOf(messageSnapshot.getValue())));
                 }
-
+                //For every record in database
                 for (String i: MainList){
 
-                    Log.d(TAG, "Value is: " + i);
-
+                    //Formatting data from database
                     String ss[] = i.split(",");
                     String Millis = ss[0];
                     String message = ss[1];
                     String longi = ss[3];
                     String latt = ss[2];
-
                     latt = latt.replace("{", "");
                     longi = longi.replace("}", "");
                     message = message.substring(10);
                     latt = latt.substring(10);
                     longi = longi.substring(11);
-
                     double latitudeDB = Double.parseDouble(latt);
                     double longitudeDB = Double.parseDouble(longi);
-
                     Date date = new Date(Long.parseLong(Millis));
                     String dateString = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format(date);
 
+                    //Creating new marker with title as date/time & message
                     LatLng marker = new LatLng(latitudeDB, longitudeDB);
                     mMap.addMarker(new MarkerOptions()
                             .position(marker)
                             .title(dateString + " : " + message)
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-
-
                 }
             }
             @Override
@@ -99,95 +94,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-
-
-
     }
 
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        //Moving camera to Ireland
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-//        LatLng Engineering_Building = new LatLng(53.283912, -9.063874);
-//        mMap.addMarker(new MarkerOptions().position(Engineering_Building).title("Marker at Engineering Building")
-//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(6));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(53.1424, -8.1983269)));
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        mMap.clear();
-
-        for (String i: MainList){
-            Log.d(TAG, "Value is: " + i);
-            String ss[] = i.split(",");
-            String Millis = ss[0];
-            String latt = ss[1];
-            String longi = ss[2];
-
-            latt = latt.replace("{", "");
-            longi = longi.replace("}", "");
-
-            latt = latt.substring(10);
-            longi = longi.substring(11);
-            double latitudeDB = Double.parseDouble(latt);
-            double longitudeDB = Double.parseDouble(longi);
-
-            Date date=new Date(Long.parseLong(Millis));
-            String dateString = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format(date);
-
-            if (latitudeDB > location.getLatitude() + 50 ||  latitudeDB < location.getLatitude() - 50) {
-                if (longitudeDB > location.getLongitude() + 50 || longitudeDB < location.getLongitude() - 50) {
-                    LatLng marker = new LatLng(latitudeDB, longitudeDB);
-                    mMap.addMarker(new MarkerOptions()
-                            .position(marker)
-                            .title(dateString)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-                }
-            }
-        }
-
-        LatLng CurrentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(CurrentLocation).title("Current Location")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(18));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(CurrentLocation));
-
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        Date now = new Date();
-//        String ID = (String.valueOf(now.getTime()));
-//        DatabaseReference myRef = database.getReference(ID);
-//        LocationData currentData = new LocationData(location.getLatitude(),location.getLongitude());
-//        myRef.setValue(currentData);
-    }
+    public void onLocationChanged(Location location) {    }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
+    public void onStatusChanged(String provider, int status, Bundle extras) {    }
 
     @Override
-    public void onProviderEnabled(String provider) {
-
-    }
+    public void onProviderEnabled(String provider) {    }
 
     @Override
-    public void onProviderDisabled(String provider) {
-
-    }
+    public void onProviderDisabled(String provider) {    }
 
 
     private void startGettingLocations() {
@@ -228,8 +155,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         != PackageManager.PERMISSION_GRANTED) {
 
             Toast.makeText(this, "Permission not Granted", Toast.LENGTH_SHORT).show();
-
-
             return;
         }
 
@@ -264,7 +189,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 result.add(perm);
             }
         }
-
         return result;
     }
     private boolean hasPermission(String permission) {
@@ -299,7 +223,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         alertDialog.show();
     }
 
-    public void Submit(View view) {
+    //Method to close activity
+    public void CloseMap(View view) {
         finish();
     }
 }

@@ -1,34 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/rectangle"
     tools:context="com.example.daram.gps_app.MainActivity">
 
 
+    <ImageView
+        android:id="@+id/globeImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="false"
+        android:layout_centerInParent="false"
+        android:layout_centerVertical="false"
+        android:src="@drawable/globe"
+        android:visibility="visible" />
     <Button
         android:id="@+id/Submit"
-        android:layout_width="match_parent"
+        style="@android:style/Widget.Button.Inset"
+        android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:onClick="openSubmitMessage"
+        android:layout_toRightOf="@+id/map"
+        android:layout_alignBottom="@+id/map"
         android:text="Submit Message" />
 
     <Button
         android:id="@+id/map"
-        android:layout_width="match_parent"
+        style="@android:style/Widget.Button.Inset"
+        android:layout_width="wrap_content"
         android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
         android:onClick="openMapView"
+        android:layout_alignParentBottom="true"
         android:text="Map View" />
 
     <Button
         android:id="@+id/messages"
-        android:layout_width="match_parent"
+        style="@android:style/Widget.Button.Inset"
+        android:layout_width="wrap_content"
+        android:layout_alignBottom="@+id/map"
         android:layout_height="60dp"
+        android:layout_toLeftOf="@+id/map"
         android:onClick="openAllMessages"
         android:text="All Messages" />
 
 
-</LinearLayout>
+</RelativeLayout>

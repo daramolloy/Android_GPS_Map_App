@@ -35,165 +35,175 @@ import java.util.Date;
 
 public class SubmitMessage extends AppCompatActivity implements android.location.LocationListener {
 
+    // Initialise variables
     EditText editText;
-    private LocationData currentLoc;
-    private Location currentLocation = new Location("");
-    private ArrayList<String> LocationStringList = new ArrayList<String>();
-    private ArrayList<Location> LocationObjList = new ArrayList<Location>();
-    private String addToMsg;
-    private String keyToDelete;
+    private LocationData currentLoc; // Current GPS LocationData
+    private Location currentLocation = new Location(""); // Current GPS Location
+    private ArrayList<String> LocationStringList = new ArrayList<String>(); // ArrayList of LocationData parsed as strings
+    private ArrayList<Location> LocationObjList = new ArrayList<Location>(); // ArrayList of Location
+    private String addToMsg; // Used to append messages within 10m
+    private String keyToDelete; // Reference to delete old entries
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submit_message);
-        editText = (EditText) findViewById(R.id.editText2);
+        editText = (EditText) findViewById(R.id.editText2); // EditText object
         startGettingLocations();
 
     }
 
+    /* OnClick method implemented by the Submit Text button.
+    *  When pressed, sends the message in the EditText box to the Firebase database with the
+    *  coordinates. Also checks the distance to every other message, and if any are closer
+    *  than 10m, they are appended as opposed to a new one being added
+    */
     public void SubmitText(View view) {
-
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRefDown = database.getReference();
 
-        myRefDown.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+        // The currentLoc LocationData object must be parsed as a location object
+        // This is to compare it with each location object in the database using the "distanceTo()" method
+        currentLocation.setLatitude(currentLoc.getLatitude());
+        currentLocation.setLongitude(currentLoc.getLongitude());
 
-                    // The currentLoc LocationData object must be parsed as a location object
-                    // This is to compare it with each location object in the database using the "distanceTo()" method
-                    currentLocation.setLatitude(currentLoc.getLatitude());
-                    currentLocation.setLongitude(currentLoc.getLongitude());
-
-                    for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
-                        Log.d("log value", "" + messageSnapshot.getValue().toString());
-                        Log.d("log key", "" + messageSnapshot.getKey());
-                        String databaseLocations = messageSnapshot.getValue().toString() + "," + messageSnapshot.getKey();
-                        Log.d("log locations" , databaseLocations);
-                        LocationStringList.add(databaseLocations);
-                    }
-
-                    for (String i : LocationStringList) {
-
-                        String ss[] = i.split(",");
-                        String message = ss[0];
-                        String longi = ss[2];
-                        String latt = ss[1];
-                        String key = ss[3];
-
-                        latt = latt.replace("{", "");
-                        longi = longi.replace("}", "");
-                        message = message.substring(9);
-                        latt = latt.substring(10);
-                        longi = longi.substring(11);
-
-                        double latitudeDB = Double.parseDouble(latt);
-                        double longitudeDB = Double.parseDouble(longi);
-
-                        Location compareLoc = new Location("");
-                        compareLoc.setLatitude(latitudeDB);
-                        compareLoc.setLongitude(longitudeDB);
-
-                        LocationObjList.add(compareLoc);
-
-                        for(Location a : LocationObjList){
-                            if ((a.distanceTo(currentLocation))<10){
-                                keyToDelete = key;
-                                addToMsg = message;
-                            }
-                        }
-
-
-                        Log.d("Latt", "Value is: " + latitudeDB);
-                        Log.d("Long", "Value is: " + longitudeDB);
-                        Log.d("Message", "Value is: " + message);
-                    }
-
-
-                }
+        /* As the activity is finished when the message is sent, we only
+        ** need a single event listener, this waits for the data to change
+        ** implements once
+         */
+        myRefDown.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("Lawg", "Failed to read value.", error.toException());
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                // Get the current date as an ID reference
+                Date now = new Date();
+                String ID = (String.valueOf(now.getTime()));
+
+                // Input string cannot have a comma as it will interfere with the delimiter
+                String messageToSend = editText.getText().toString();
+                messageToSend = messageToSend.replace(","," ");
+
+                // Case where database is null
+                if (dataSnapshot.getChildrenCount() == 0){
+                    // Create a MessageData object and upload to the database
+                    DatabaseReference myRefUp = database.getReference(ID);
+                    MessageData currentData = new MessageData(currentLoc.getLatitude(),
+                            currentLoc.getLongitude(), messageToSend);
+                    myRefUp.setValue(currentData);
+                }
+
+                // Get all elements in the database and store them in an arrayList
+                for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
+                    String databaseLocations = messageSnapshot.getValue().toString() + "," + messageSnapshot.getKey();
+                    LocationStringList.add(databaseLocations);
+                }
+
+                // Iterate through the arrayList seperating the text elements
+                for (String i : LocationStringList) {
+
+                    // Delimit the elements into substrings using commas as a delimiter
+                    String ss[] = i.split(",");
+                    String message = ss[0];
+                    String longi = ss[2];
+                    String latt = ss[1];
+                    String key = ss[3];
+
+                    // Format the strings to be parsed as doubles
+                    latt = latt.replace("{", "");
+                    longi = longi.replace("}", "");
+                    message = message.substring(9);
+                    latt = latt.substring(10);
+                    longi = longi.substring(11);
+
+                    // Parse the lat and long values as doubles
+                    double latitudeDB = Double.parseDouble(latt);
+                    double longitudeDB = Double.parseDouble(longi);
+
+                    // Create a new location object based on the retrieved latitude and longitude
+                    Location compareLoc = new Location("");
+                    compareLoc.setLatitude(latitudeDB);
+                    compareLoc.setLongitude(longitudeDB);
+
+                    // Add each new Location Object to an arrayList
+                    LocationObjList.add(compareLoc);
+
+                    // Iterate through arrayList looking for locations within 10m of each other
+                    // If a case is found, we need to save the key and the message
+                    for(Location a : LocationObjList) {
+                        if ((a.distanceTo(currentLocation)) < 10.0) {
+                            keyToDelete = key;
+                            addToMsg = message;
+                        }
+                    }
+                }
+
+                for(Location a : LocationObjList){ // Loop through all the Location Objects to check distance between current location
+
+                    float distance = a.distanceTo(currentLocation); // Store the distance between current location and each Location Object
+
+                    if (distance>=10.0){ // If the distance is greater than 10m we can just add a new one
+
+                        DatabaseReference myRefUp = database.getReference(ID);
+                        MessageData currentData = new MessageData(currentLoc.getLatitude(),
+                                currentLoc.getLongitude(), messageToSend);
+                        myRefUp.setValue(currentData); // Add database entry with current value in the editText field
+
+                    }else{ // Messages closer than 10m must append the old one
+
+                        // Remove the old entry
+                        // The string associated with the old value is saved in "addToMsg"
+                        DatabaseReference refToDelete = database.getReference(keyToDelete);
+                        refToDelete.removeValue();
+
+                        DatabaseReference myRefUp = database.getReference(ID); // Get data reference
+
+                        String newMessage = addToMsg + "; " + messageToSend; // Append the message
+
+                        MessageData currentData = new MessageData(currentLoc.getLatitude(),
+                                currentLoc.getLongitude(), newMessage);
+                        myRefUp.setValue(currentData); // Add new data to database
+                    }
+                }
+
+                // Show the user that the message sent successfully
+                Context context = getApplicationContext();
+                CharSequence text = "Message sent";
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+
+                finish(); // Finish the activity once the message is sent
             }
-        });
-
-            // A permission check is required for the getLastKnownLocation() method to work
-            //if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-              //  return;
-            //}
-
-
-        Date now = new Date();
-        String ID = (String.valueOf(now.getTime()));
-
-        for(Location a : LocationObjList){
-            float distance = a.distanceTo(currentLocation);
-            if (distance>=10){
-
-                DatabaseReference myRefUp = database.getReference(ID);
-                MessageData currentData = new MessageData(currentLoc.getLatitude(),
-                        currentLoc.getLongitude(), editText.getText().toString());
-                myRefUp.setValue(currentData);
-            }else{ // Messages closer than 10m must append the old one
-                Log.d("key", keyToDelete);
-
-                DatabaseReference refToDelete = database.getReference(keyToDelete);
-                refToDelete.removeValue();
-
-                DatabaseReference myRefUp = database.getReference(ID);
-                String newMessage = addToMsg + "; " + editText.getText().toString();
-
-                MessageData currentData = new MessageData(currentLoc.getLatitude(),
-                        currentLoc.getLongitude(), newMessage);
-                myRefUp.setValue(currentData);
-
-            }
-            Log.d("distance", "" + distance);
-        }
-            // Show the user that the message sent successfully
-            Context context = getApplicationContext();
-            CharSequence text = "Message sent";
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-
-        }
+        @Override
+            public void onCancelled(DatabaseError error) { // Case where no data could be read from the database
+            // Failed to read value
+            Log.w("Database Error", "Failed to read value.", error.toException());
+        }});
+    }
 
 
-    public void Back(View view) {
+    public void Back(View view) { // Finish the activity if the back button is pressed
         finish();
     }
 
+    // Overridden methods needed to be implemented
     @Override
     public void onLocationChanged(Location location){
-
-
     }
-
-
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
     }
-
     @Override
     public void onProviderEnabled(String provider) {
-
     }
-
     @Override
     public void onProviderDisabled(String provider) {
-
     }
-
     private boolean canAskPermission() {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
-
     private boolean hasPermission(String permission) {
         if (canAskPermission()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -202,7 +212,6 @@ public class SubmitMessage extends AppCompatActivity implements android.location
         }
         return true;
     }
-
     private ArrayList findUnAskedPermissions(ArrayList<String> wanted) {
         ArrayList result = new ArrayList();
 
@@ -215,6 +224,7 @@ public class SubmitMessage extends AppCompatActivity implements android.location
         return result;
     }
 
+    // Uses the same implementation as MapActivity
     private void startGettingLocations() {
 
         LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -223,7 +233,7 @@ public class SubmitMessage extends AppCompatActivity implements android.location
         boolean canGetLocation = true;
         int ALL_PERMISSIONS_RESULT = 101;
         long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;// Distance in meters
-        long MIN_TIME_BW_UPDATES = 100;// Time in milliseconds
+        long MIN_TIME_BW_UPDATES = 10;// Time in milliseconds
         Criteria criteria = new Criteria();
 
         ArrayList<String> permissions = new ArrayList<>();

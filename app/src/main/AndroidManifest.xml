@@ -30,11 +30,11 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="AIzaSyDLwNhMG9M5rspn0hPYTIdklxo9tUTTPQo" />
 
         <activity
             android:name=".MainActivity"
-            android:label="Home">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,13 +43,13 @@
         </activity>
         <activity
             android:name=".MapsActivity"
-            android:label="Map" />
+            android:label="@string/title_activity_maps" />
         <activity
             android:name=".SubmitMessage"
-            android:label="Submit Message" />
+            android:label="@string/title_activity_submit" />
         <activity
             android:name=".AllMessages"
-            android:label="All Messages" ></activity>
+            android:label="@string/title_activity_all" ></activity>
     </application>
 
 </manifest>
